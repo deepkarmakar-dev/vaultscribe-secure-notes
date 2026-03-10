@@ -1,0 +1,57 @@
+/* ===== OTP VERIFIED PAGE ===== */
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f4f6f8;
+}
+
+.card {
+    background: #ffffff;
+    padding: 40px 35px;
+    width: 360px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.checkmark {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    background: #28a745;
+    color: #ffffff;
+    font-size: 40px;
+    font-weight: bold;
+    line-height: 70px;
+}
+
+.card h1 {
+    font-size: 22px;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 25px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 22px;
+    background: #007bff;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
