@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Laravel + Livewire Starter Kit
 
 ## Introduction
@@ -27,3 +28,7 @@ In order to ensure that the Laravel community is welcoming to all, please review
 ## License
 
 The Laravel + Livewire starter kit is open-sourced software licensed under the MIT license.
+=======
+# vaultscribe-secure-notes
+A secure notes web application that allows users to store and manage notes safely with authentication and privacy-focused design.
+>>>>>>> b576b24f7436e9b5f3ee44f5cd5aab2310958448
