@@ -1,34 +1,38 @@
-<<<<<<< HEAD
-# Laravel + Livewire Starter Kit
+# Vaultscribe Secure Notes
 
-## Introduction
+Vaultscribe is a secure notes web application built with Laravel.
+It allows users to safely store and manage personal notes with authentication and privacy-focused design.
 
-Our Laravel + [Livewire](https://livewire.laravel.com) starter kit provides a robust, modern starting point for building Laravel applications with a Livewire frontend.
+## Features
 
-Livewire is a powerful way of building dynamic, reactive, frontend UIs using just PHP. It's a great fit for teams that primarily use Blade templates and are looking for a simpler alternative to JavaScript-driven SPA frameworks like React and Vue.
+* User authentication
+* Secure note storage
+* Privacy-focused architecture
+* Laravel backend
+* Livewire + Blade frontend
 
-This Livewire starter kit utilizes Livewire 4, TypeScript, Tailwind, and the [Flux UI](https://fluxui.dev) component library.
+## Tech Stack
 
-If you are looking for the alternate configurations of this starter kit, they can be found in the following branches:
+* Laravel
+* Livewire
+* Blade
+* Tailwind CSS
+* MySQL / SQLite
 
-- [workos](https://github.com/laravel/livewire-starter-kit/tree/workos) - if WorkOS is selected for authentication
+## Installation
 
-## Official Documentation
-
-Documentation for all Laravel starter kits can be found on the [Laravel website](https://laravel.com/docs/starter-kits).
-
-## Contributing
-
-Thank you for considering contributing to our starter kit! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```bash
+git clone https://github.com/deepkarmakar-dev/vaultscribe-secure-notes.git
+cd vaultscribe-secure-notes
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm run build
+php artisan serve
+```
 
 ## License
 
-The Laravel + Livewire starter kit is open-sourced software licensed under the MIT license.
-=======
-# vaultscribe-secure-notes
-A secure notes web application that allows users to store and manage notes safely with authentication and privacy-focused design.
->>>>>>> b576b24f7436e9b5f3ee44f5cd5aab2310958448
+This project is open-sourced under the MIT License.
