@@ -1,0 +1,43 @@
+name: Laravel CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Copy .env
+        run: cp .env.example .env
+
+      - name: Set DB to sqlite
+        run: |
+          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+
+      - name: Create sqlite DB
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+
+      - name: Generate app key
+        run: php artisan key:generate
+
+      - name: Run migrations
+        run: php artisan migrate
+
+      - name: Run tests
+        run: php artisan test
