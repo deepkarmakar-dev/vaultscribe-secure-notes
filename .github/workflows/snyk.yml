@@ -1,0 +1,18 @@
+name: Snyk Scan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  snyk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run Snyk
+        uses: snyk/actions/php@master
+        env:
+          SNYK_TOKEN: ${{ snyk_uat.1fcad39e.eyJlIjoxNzgzMzI3ODg2LCJoIjoic255ay5pbyIsImoiOiJBWjFuSTl1MUlMZ1NTaEdUeXZJSEJ3IiwicyI6IkQ2Zmh2VkI3UlZlclRJNGE0MlhNR1EiLCJ0aWQiOiJBQUFBQUFBQUFBQUFBQUFBQUFBQUFBIn0.bLBRTuYHuKJ97kIbBMr86nQnwZnNQtrnMiZowJYPoDpYeyHQXSRYRKu29nrS6tvVget3f892EFHMWztI0usdCg }}
