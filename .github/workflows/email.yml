@@ -1,0 +1,23 @@
+name: Email Alert
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  email:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ karmakardeep134@gmail.com }}
+          password: ${{ naop bjxz prij zvgn }}
+          subject: "🚀 Deployment Successful"
+          to: ${{ karmakardeep942@gmail.com }}
+          from: GitHub Actions
+          body: "Your DevSecOps pipeline ran successfully!"
