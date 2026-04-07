@@ -15,9 +15,10 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          username: ${{karmakardeep134@gmail.com}}
-          password: ${{naop bjxz prij zvgn}}
+          secure: true
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "🚀 Deployment Successful"
-          to: ${{karmakardeep942@gmail.com}}
-          from: GitHub Actions
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_USERNAME }}
           body: "Your DevSecOps pipeline ran successfully!"
