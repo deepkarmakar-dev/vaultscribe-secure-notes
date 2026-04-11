@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\SecurityHeaders;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -10,14 +11,22 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+
     ->withMiddleware(function (Middleware $middleware): void {
 
         $middleware->alias([
             '2fa' => \App\Http\Middleware\Ensure2FAVerified::class,
         ]);
 
+        $middleware->append(SecurityHeaders::class);
+        
+        $middleware->redirectGuestsTo(function () {
+        return route('log'); // 👈 yahi fix
+    });
     })
+
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })
+
     ->create();

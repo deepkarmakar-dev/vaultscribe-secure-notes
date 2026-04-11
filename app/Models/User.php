@@ -8,11 +8,22 @@ use Illuminate\Notifications\Notifiable;
 // use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class User extends Authenticatable
+use Filament\Models\Contracts\FilamentUser; // Ye line add karein
+use Filament\Panel; // Ye line add karein
+
+class User extends Authenticatable implements FilamentUser // <-- Ye "implements" add karein
 {
     use HasFactory, Notifiable;
 
     protected $table = "users";
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true; 
+    }
+
+    // ... baki aapka code
+
 
     protected $fillable = [
         'name',

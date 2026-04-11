@@ -20,7 +20,7 @@
     <input name="name" placeholder="Full Name" value="{{ old('name') }}" required>
     <input name="email" type="email" placeholder="Email" value="{{ old('email') }}" required>
     <input name="password" type="password" placeholder="Password" required>
-    <input name="confirm_password" type="password" placeholder="Confirm Password" required>
+    <input name="password_confirmation" type="password" placeholder="Confirm Password" required>
 
     <button>Register</button>
     <div class="footer-links">

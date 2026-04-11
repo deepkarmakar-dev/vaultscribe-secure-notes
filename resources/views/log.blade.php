@@ -21,7 +21,7 @@
     <input name="email" type="email" placeholder="Email"  required>
     <input name="password" type="password" placeholder="Password" required>
  @if(session()->get('login_attempts',0) >= 3)
-        <div class="g-recaptcha" 
+        <div class="g-recaptcha"
              data-sitekey="{{ config('services.recaptcha.site_key') }}">
         </div>
     @endif

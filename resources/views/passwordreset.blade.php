@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Reset Password</title>
 <link rel="stylesheet" href="{{ asset('style.css') }}">
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body>
 

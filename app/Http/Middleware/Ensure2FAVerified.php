@@ -11,23 +11,25 @@ class Ensure2FAVerified
 {
     public function handle(Request $request, Closure $next): Response
     {
+        // ❌ Not logged in
         if (!Auth::check()) {
             return redirect()->route('log');
         }
 
-        // Skip 2FA related routes
-        if (
-            $request->routeIs('2fa.challenge') ||
-            $request->routeIs('2fa.verify') ||
-            $request->routeIs('2fa.setup') ||
-            $request->routeIs('2fa.enable')
-        ) {
+        // ✅ Skip 2FA routes (important to avoid loop)
+        if ($request->routeIs([
+            '2fa.challenge',
+            '2fa.verify',
+            '2fa.setup',
+            '2fa.enable'
+        ])) {
             return $next($request);
         }
 
         $user = Auth::user();
 
-        if ($user->google2fa_enabled && !session('2fa_passed')) {
+        // 🔐 If 2FA enabled but not verified
+        if ($user->google2fa_enabled && !session()->has('2fa_passed')) {
             return redirect()->route('2fa.challenge');
         }
 

@@ -4,7 +4,7 @@
 
 <div class="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10">
 
-```
+
 <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-12 w-full max-w-2xl">
     
     <div class="text-center mb-10">
@@ -83,10 +83,11 @@
 
             </form>
         </div>
+        
 
     </div>
 </div>
-```
+
 
 </div>
 @endsection

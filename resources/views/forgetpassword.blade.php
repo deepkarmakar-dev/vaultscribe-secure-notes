@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+/*<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -18,7 +18,7 @@
     <div class="success">{{ session('status') }}</div>
 @endif
 
-<form method="POST" action="{{ route('password.email') }}">
+<form method="POST" action="{{ route('password.forget.post') }}">
     @csrf
 
     <input type="email" name="email" placeholder="Enter your email" required>
