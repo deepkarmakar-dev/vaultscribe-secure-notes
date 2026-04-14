@@ -77,20 +77,13 @@ public function logstore(Request $req)
     //  Reset failed attempts
     session()->forget('login_attempts');
 
-    //  If 2FA Enabled
-if ($user->google2fa_enabled) {
-
-    Auth::login($user);
-
-    // Regenerate FIRST
-    $req->session()->regenerate();
-
-    // Then set flag
-    $req->session()->put('2fa_passed', false);
-
-    return redirect()->route('2fa.challenge');
-}
-
+  
+        //  2FA
+        if ($user->google2fa_enabled) {
+            session(['2fa_user_id' => $user->id]);
+            return redirect()->route('2fa.challenge');
+        }
+        
     //  Normal Login (No 2FA)
     Auth::login($user);
     $req->session()->regenerate();

@@ -34,9 +34,11 @@
     <!-- Confirm Password -->
     <input type="password" name="password_confirmation" placeholder="Confirm Password" required>
      
-         <div class="g-recaptcha" 
+          @if(session()->get('login_attempts',0) >= 3)
+        <div class="g-recaptcha"
              data-sitekey="{{ config('services.recaptcha.site_key') }}">
         </div>
+    @endif
 
     <button>Reset Password</button> 
     <div class="footer-links">

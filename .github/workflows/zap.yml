@@ -1,0 +1,17 @@
+name: OWASP ZAP Scan
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  zap:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.10.0
+        with:
+          target: "https://vaultscribe.in"
+          cmd_options: "-a -T 60"

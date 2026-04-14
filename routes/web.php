@@ -6,79 +6,90 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\registerController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\passwordController;
-use App\Http\Controllers\otpController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\NoteController;
 use App\Models\ActivityLog;
 
-//  Public Routes
-Route::get('/login', function () {
-    return redirect()->route('log');
-});
-Route::get('/', function () {
-    return view('log');
-})->name('home');
+/*
+|--------------------------------------------------------------------------
+| 1. PUBLIC ROUTES (Guest only)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', fn() => view('log'))->name('home');
+
+Route::get('log', [AuthController::class, 'log'])->name('log');
+Route::post('log', [AuthController::class, 'logstore'])->middleware('throttle:5,1');
 
 Route::get('register', [registerController::class, 'register'])->name('register');
 Route::post('register', [registerController::class, 'store']);
 
-Route::get('log', [AuthController::class, 'log'])->name('log');
-Route::post('log', [AuthController::class, 'logstore'])
-    ->middleware('throttle:5,1');
+/*
+|--------------------------------------------------------------------------
+| 2. 2FA ROUTES (IMPORTANT — NO auth middleware)
+|--------------------------------------------------------------------------
+*/
 
+Route::get('/2fa/challenge', [TwoFactorController::class, 'challenge'])->name('2fa.challenge');
+Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->name('2fa.verify');
 
-// Email OTP Verification
+/*
+|--------------------------------------------------------------------------
+| 3. PASSWORD RESET
+|--------------------------------------------------------------------------
+*/
 
+Route::get('forget', [passwordController::class, 'forget'])->name('forget');
+Route::post('forgetpass', [passwordController::class, 'forgetpass'])->name('password.forget.post');
 
-Route::get('otp', [otpController::class, 'otp'])->name('otp');
-Route::post('otp', [otpController::class, 'verifyOtp'])->name('otp.verify');
+Route::get('/reset-password/{token}', [passwordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [passwordController::class, 'resetPassword'])->name('password.update');
 
-//  Password Reset
-
-
-Route::get('forget', [PasswordController::class, 'forget'])->name('forget');
-Route::post('forgetpass', [PasswordController::class, 'forgetpass'])->name('password.forget.post');
-Route::get('/reset-password/{token}', [PasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('/reset-password', [PasswordController::class, 'resetPassword'])->name('password.update');
-
-
-//  2FA Routes (Only Auth Required)
+/*
+|--------------------------------------------------------------------------
+| 4. AUTH REQUIRED (LOGIN HO CHUKA HAI)
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth')->group(function () {
 
+    // 2FA setup (first time enable)
     Route::get('/2fa/setup', [TwoFactorController::class, 'setup'])->name('2fa.setup');
     Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
-
-    Route::get('/2fa/challenge', [TwoFactorController::class, 'challenge'])->name('2fa.challenge');
-    Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->name('2fa.verify');
-
 });
 
-//  Protected Routes (Auth + 2FA Required)
-
+/*
+|--------------------------------------------------------------------------
+| 5. FULLY PROTECTED (AUTH + 2FA)
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware(['auth', '2fa'])->group(function () {
 
     Route::get('/dashboard', [NoteController::class, 'dashboard'])->name('dashboard');
 
+    // Notes
     Route::post('/notes', [NoteController::class, 'dashboardValue'])->name('notes.store');
     Route::get('/notes/{note}/edit', [NoteController::class, 'notesedit'])->name('notes.edit');
     Route::put('/notes/{note}', [NoteController::class, 'notesupdate'])->name('notes.update');
     Route::delete('/notes/{note}', [NoteController::class, 'notesdelete'])->name('notes.delete');
 
+    // Trash
     Route::get('/notes/trash', [NoteController::class, 'showtrash'])->name('notes.trash');
     Route::patch('/notes/trash/restore-all', [NoteController::class, 'restoreAll'])->name('notes.restoreAll');
     Route::delete('/notes/trash/delete-all', [NoteController::class, 'forcedeleteall'])->name('notes.deleteAll');
-
     Route::patch('/notes/{id}/restore', [NoteController::class, 'restore'])->name('notes.restore');
     Route::delete('/notes/{id}/delete', [NoteController::class, 'forcedelete'])->name('notes.forceDelete');
 
-    Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])
-    ->name('2fa.disable');
+    // Disable 2FA
+    Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
 });
 
-//  Logout
-
+/*
+|--------------------------------------------------------------------------
+| 6. LOGOUT
+|--------------------------------------------------------------------------
+*/
 
 Route::post('logout', function (Request $req) {
 
@@ -91,8 +102,7 @@ Route::post('logout', function (Request $req) {
 
     Auth::logout();
 
-    session()->forget('login_attempts');
-
+    session()->forget(['2fa_passed', 'login_attempts', '2fa_user_id']);
     $req->session()->invalidate();
     $req->session()->regenerateToken();
 

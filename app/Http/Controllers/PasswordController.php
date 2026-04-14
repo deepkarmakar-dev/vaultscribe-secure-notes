@@ -25,21 +25,52 @@ class PasswordController extends Controller
 
    public function forgetpass(Request $req)
 {
+     $attempts = session()->get('login_attempts', 0);
     // 1️ Validation
     $req->validate([
         'email' => 'required|email'
     ]);
+
+
+      //  After 3 failed attempts → Captcha required
+      if ($attempts >= 3) {
+
+        if (!$req->filled('g-recaptcha-response')) {
+            return back()->withErrors([
+                'email' => 'Captcha required'
+            ]);
+        }
+
+        $response = Http::asForm()->post(
+            'https://www.google.com/recaptcha/api/siteverify',
+            [
+                'secret' => env('NOCAPTCHA_SECRET'),
+                'response' => $req->input('g-recaptcha-response'),
+                'remoteip' => $req->ip(),
+            ]
+        );
+
+        if (!$response->json('success')) {
+            return back()->withErrors([
+                'email' => 'Captcha failed'
+            ]);
+        }
+    }
 
     //  Reset Link Send
     $status = Password::sendResetLink(
         $req->only('email')
     );
 
+    
+
     // 3 Response Handle
     if ($status === Password::RESET_LINK_SENT) {
+        session()->forget('login_attempts');
         return back()->with('status', 'Reset link sent to your email');
     } else {
-        return back()->withErrors(['email' => 'Email not found']);
+        session()->put('login_attempts', $attempts + 1);
+        return back()->with('status', 'If email exists, reset link sent');
     }
 }
 
@@ -78,7 +109,10 @@ public function resetPassword(Request $request)
     }
 
    
-       if (!$request->filled('g-recaptcha-response')) {
+     //  After 3 failed attempts → Captcha required
+    if ($attempts >= 3) {
+
+        if (!$request->filled('g-recaptcha-response')) {
             return back()->withErrors([
                 'email' => 'Captcha required'
             ]);
@@ -98,6 +132,7 @@ public function resetPassword(Request $request)
                 'email' => 'Captcha failed'
             ]);
         }
+    }
 
 
     //  Password Reset Logic
@@ -118,11 +153,21 @@ public function resetPassword(Request $request)
 
     //  Response
     if ($status === Password::PASSWORD_RESET) {
+        session()->forget('login_attempts');
+        Auth::logoutOtherDevices($request->password);
+
+        $user = User::where('email', $request->email)->first();
+
+Mail::raw("Your password has been changed successfully.\n\nIf this was not you, please contact support immediately.", function ($message) use ($user) {
+    $message->to($user->email)
+            ->subject('Password Changed Alert');
+});
+
         return redirect()->route('log')
             ->with('status', 'Password reset successful');
        
     }
-
+    session()->put('login_attempts', $attempts + 1);
     return back()->withErrors(['email' => 'Invalid or expired link']);
 }
 

@@ -17,6 +17,7 @@
         "pragmarx/google2fa-laravel": "*"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "*",
         "fakerphp/faker": "^1.23",
         "laravel/boost": "^2.0",
         "laravel/breeze": "*",

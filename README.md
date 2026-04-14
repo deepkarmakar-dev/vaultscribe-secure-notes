@@ -1,34 +1,187 @@
-<<<<<<< HEAD
-# Laravel + Livewire Starter Kit
+# Vaultscribe 🔐
 
-## Introduction
+**Secure Notes Application built with Laravel**
 
-Our Laravel + [Livewire](https://livewire.laravel.com) starter kit provides a robust, modern starting point for building Laravel applications with a Livewire frontend.
+Vaultscribe is a security-focused web application that allows users to safely store and manage personal notes.
+It implements multiple security layers such as **Email OTP verification, Two-Factor Authentication (2FA), encrypted note storage, login protection, and activity logging**.
 
-Livewire is a powerful way of building dynamic, reactive, frontend UIs using just PHP. It's a great fit for teams that primarily use Blade templates and are looking for a simpler alternative to JavaScript-driven SPA frameworks like React and Vue.
+The project is designed as a **secure Laravel application** demonstrating modern authentication and security practices.
 
-This Livewire starter kit utilizes Livewire 4, TypeScript, Tailwind, and the [Flux UI](https://fluxui.dev) component library.
+---
 
-If you are looking for the alternate configurations of this starter kit, they can be found in the following branches:
+# Features
 
-- [workos](https://github.com/laravel/livewire-starter-kit/tree/workos) - if WorkOS is selected for authentication
+### Authentication Security
 
-## Official Documentation
+* User registration with **email OTP verification**
+* Secure password hashing using **Laravel Hash**
+* **Login rate limiting**
+* **Google reCAPTCHA protection** after multiple failed login attempts
+* **Password reset via secure email link**
 
-Documentation for all Laravel starter kits can be found on the [Laravel website](https://laravel.com/docs/starter-kits).
+### Two Factor Authentication (2FA)
 
-## Contributing
+* Google Authenticator compatible
+* QR code setup
+* OTP verification challenge
+* Enable / Disable 2FA option
 
-Thank you for considering contributing to our starter kit! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Secure Notes System
 
-## Code of Conduct
+* Create notes
+* Edit notes
+* Delete notes
+* Soft delete support
+* Trash system
+* Restore deleted notes
+* Permanently delete notes
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Encryption
 
-## License
+All note data is encrypted using Laravel encrypted casts.
 
-The Laravel + Livewire starter kit is open-sourced software licensed under the MIT license.
-=======
-# vaultscribe-secure-notes
-A secure notes web application that allows users to store and manage notes safely with authentication and privacy-focused design.
->>>>>>> b576b24f7436e9b5f3ee44f5cd5aab2310958448
+* Encrypted note titles
+* Encrypted note descriptions
+* Encrypted 2FA secrets
+
+### Activity Logging
+
+The system records important security events:
+
+* User login
+* User logout
+* Note creation
+* Note updates
+* Note deletion
+
+Each activity log stores:
+
+* User ID
+* IP address
+* User agent
+
+### Security Features
+
+* OTP expiration
+* OTP attempt limits
+* Login attempt tracking
+* Session regeneration after login
+* Route protection with middleware
+* Authorization checks for note access
+* CSRF protection (Laravel default)
+
+---
+
+# Tech Stack
+
+Backend
+
+* Laravel
+* PHP
+
+Frontend
+
+* Blade Templates
+* Tailwind CSS
+* Livewire
+
+Security
+
+* Google2FA
+* Laravel Encryption
+* reCAPTCHA
+
+Database
+
+* MySQL / SQLite
+
+---
+
+# Project Structure
+
+```
+app/
+ ├── Http/Controllers
+ │   ├── UserController
+ │   ├── NoteController
+ │   └── TwoFactorController
+ │
+ ├── Models
+ │   ├── User
+ │   ├── Note
+ │   └── ActivityLog
+
+routes/
+ └── web.php
+
+resources/
+ └── views
+
+database/
+ └── migrations
+```
+
+---
+
+# Installation
+
+Clone repository
+
+```
+git clone https://github.com/deepkarmakar-dev/vaultscribe-secure-notes.git
+cd vaultscribe-secure-notes
+```
+
+Install dependencies
+
+```
+composer install
+npm install
+```
+
+Setup environment
+
+```
+cp .env.example .env
+php artisan key:generate
+```
+
+Configure database in `.env`
+
+Run migrations
+
+```
+php artisan migrate
+```
+
+Build frontend assets
+
+```
+npm run build
+```
+
+Run application
+
+```
+php artisan serve
+```
+
+---
+
+# Security Concepts Implemented
+
+This project demonstrates:
+
+* Secure authentication flow
+* OTP verification
+* Two-factor authentication
+* Data encryption
+* Activity auditing
+* Brute force protection
+* Captcha protection
+
+---
+
+# License
+
+This project is licensed under the **MIT License**.
