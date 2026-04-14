@@ -1,187 +1,131 @@
-# Vaultscribe 🔐
+🔐 VaultScribe – Secure Notes Application
 
-**Secure Notes Application built with Laravel**
+VaultScribe is a security-focused note-taking web application built with Laravel.
+It combines strong authentication, encryption, and modern security practices to protect user data.
 
-Vaultscribe is a security-focused web application that allows users to safely store and manage personal notes.
-It implements multiple security layers such as **Email OTP verification, Two-Factor Authentication (2FA), encrypted note storage, login protection, and activity logging**.
+🚀 Features
+🔑 Authentication & Security
+Secure user registration with:
+Strong password policy (uppercase, lowercase, number, special char)
+Weak password detection (common passwords blocked)
+Password hashing with Argon2id + Pepper
+Email verification via OTP
+Login protection with:
+Rate limiting (session-based attempts)
+Google reCAPTCHA after multiple failed attempts
+🔐 Two-Factor Authentication (2FA)
+Google Authenticator integration
+Encrypted 2FA secret storage
+OTP verification during login
+Enable / Disable anytime
+📝 Notes System
+Create, update, delete notes
+Soft delete (Trash system)
+Restore / permanently delete notes
+Auto encryption of:
+Title
+Description
+📜 Activity Logging
 
-The project is designed as a **secure Laravel application** demonstrating modern authentication and security practices.
+Tracks user actions:
 
----
+Login
+Note creation
+Note update
+Note deletion
 
-# Features
+Includes:
 
-### Authentication Security
-
-* User registration with **email OTP verification**
-* Secure password hashing using **Laravel Hash**
-* **Login rate limiting**
-* **Google reCAPTCHA protection** after multiple failed login attempts
-* **Password reset via secure email link**
-
-### Two Factor Authentication (2FA)
-
-* Google Authenticator compatible
-* QR code setup
-* OTP verification challenge
-* Enable / Disable 2FA option
-
-### Secure Notes System
-
-* Create notes
-* Edit notes
-* Delete notes
-* Soft delete support
-* Trash system
-* Restore deleted notes
-* Permanently delete notes
-
-### Encryption
-
-All note data is encrypted using Laravel encrypted casts.
-
-* Encrypted note titles
-* Encrypted note descriptions
-* Encrypted 2FA secrets
-
-### Activity Logging
-
-The system records important security events:
-
-* User login
-* User logout
-* Note creation
-* Note updates
-* Note deletion
-
-Each activity log stores:
-
-* User ID
-* IP address
-* User agent
-
-### Security Features
-
-* OTP expiration
-* OTP attempt limits
-* Login attempt tracking
-* Session regeneration after login
-* Route protection with middleware
-* Authorization checks for note access
-* CSRF protection (Laravel default)
-
----
-
-# Tech Stack
-
-Backend
-
-* Laravel
-* PHP
-
-Frontend
-
-* Blade Templates
-* Tailwind CSS
-* Livewire
-
-Security
-
-* Google2FA
-* Laravel Encryption
-* reCAPTCHA
-
-Database
-
-* MySQL / SQLite
-
----
-
-# Project Structure
-
-```
-app/
- ├── Http/Controllers
- │   ├── UserController
- │   ├── NoteController
- │   └── TwoFactorController
- │
- ├── Models
- │   ├── User
- │   ├── Note
- │   └── ActivityLog
-
-routes/
- └── web.php
-
-resources/
- └── views
-
-database/
- └── migrations
-```
-
----
-
-# Installation
-
-Clone repository
-
-```
-git clone https://github.com/deepkarmakar-dev/vaultscribe-secure-notes.git
-cd vaultscribe-secure-notes
-```
-
-Install dependencies
-
-```
+IP address
+User agent
+🔒 Advanced Security
+Content Security Policy (CSP)
+XSS, Clickjacking, MIME protection
+HSTS (production)
+Secure headers middleware
+Encrypted sensitive fields
+CSRF protection
+🔁 Password Reset System
+Email-based reset link
+Secure password validation
+reCAPTCHA protection after multiple attempts
+🛠️ Tech Stack
+Backend: Laravel (PHP)
+Database: MySQL
+Auth: Laravel Auth + Custom Security Layer
+2FA: Google2FA (PragmaRX)
+Frontend: Blade Templates + CSS
+Security: CSP, Argon2id, Encryption
+⚙️ Installation
+1️⃣ Clone Repository
+git clone https://github.com/your-username/vaultscribe.git
+cd vaultscribe
+2️⃣ Install Dependencies
 composer install
 npm install
-```
-
-Setup environment
-
-```
+3️⃣ Environment Setup
 cp .env.example .env
 php artisan key:generate
-```
+4️⃣ Configure .env
 
-Configure database in `.env`
+Add required keys:
 
-Run migrations
+HASH_PEPPER=your_secret_pepper
 
-```
+NOCAPTCHA_SITEKEY=your_site_key
+NOCAPTCHA_SECRET=your_secret_key
+
+MAIL_MAILER=smtp
+5️⃣ Run Migrations
 php artisan migrate
-```
-
-Build frontend assets
-
-```
-npm run build
-```
-
-Run application
-
-```
+6️⃣ Start Server
 php artisan serve
-```
+🔐 Security Highlights
+Passwords are double protected:
+Pepper (HMAC SHA256)
+Argon2id hashing
+Notes are encrypted at database level
+OTP & 2FA secrets are securely handled
+Login & reset protected with CAPTCHA
+Security headers enforced via middleware
+📂 Project Structure (Important Parts)
+Controllers/
+AuthController → Login system
+registerController → Registration + OTP
+PasswordController → Reset logic
+NoteController → Notes CRUD
+TwoFactorController → 2FA system
+Models/
+User → Auth + 2FA
+Note → Encrypted notes
+ActivityLog → Logs
+Middleware/
+SecurityHeaders → CSP & protection
+🧪 Example Security Flow
+User registers
+OTP sent to email
+User verifies account
+Login with password
+If enabled → 2FA required
+Notes stored with encryption
+📌 Important Notes
 
----
+Weak passwords list is loaded from:
 
-# Security Concepts Implemented
+storage/app/weak_passwords.txt
+OTP expires in 5 minutes
+After 3 failed attempts → CAPTCHA required
+After 5 OTP attempts → session reset
+🤝 Contribution
 
-This project demonstrates:
+Pull requests are welcome!
+If you want to improve security or features, feel free to contribute.
 
-* Secure authentication flow
-* OTP verification
-* Two-factor authentication
-* Data encryption
-* Activity auditing
-* Brute force protection
-* Captcha protection
+📜 License
 
----
+This project is open-source and available under the MIT License.
 
-# License
+💡 Author
 
-This project is licensed under the **MIT License**.
+Deep Karmakar
+Security-focused developer building real-world secure applications.
