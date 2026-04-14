@@ -93,7 +93,7 @@ Includes:
 
 ### 1️⃣ Clone Repository
 
-git clone https://github.com/your-username/vaultscribe.git
+git clone https://github.com/deepkarmakar-dev/vaultscribe.git
 cd vaultscribe
 
 ### 2️⃣ Install Dependencies
