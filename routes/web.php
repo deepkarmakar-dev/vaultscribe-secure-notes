@@ -10,11 +10,8 @@ use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\NoteController;
 use App\Models\ActivityLog;
 
-/*
-|--------------------------------------------------------------------------
-| 1. PUBLIC ROUTES (Guest only)
-|--------------------------------------------------------------------------
-*/
+// /  PUBLIC ROUTES (Guest only)
+
 
 Route::get('/', fn() => view('log'))->name('home');
 
@@ -24,20 +21,13 @@ Route::post('log', [AuthController::class, 'logstore'])->middleware('throttle:5,
 Route::get('register', [registerController::class, 'register'])->name('register');
 Route::post('register', [registerController::class, 'store']);
 
-/*
-|--------------------------------------------------------------------------
-| 2. 2FA ROUTES (IMPORTANT — NO auth middleware)
-|--------------------------------------------------------------------------
-*/
+ // 2FA ROUTES (IMPORTANT — NO auth middleware)
 
 Route::get('/2fa/challenge', [TwoFactorController::class, 'challenge'])->name('2fa.challenge');
 Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->name('2fa.verify');
 
-/*
-|--------------------------------------------------------------------------
-| 3. PASSWORD RESET
-|--------------------------------------------------------------------------
-*/
+ // PASSWORD RESET
+
 
 Route::get('forget', [passwordController::class, 'forget'])->name('forget');
 Route::post('forgetpass', [passwordController::class, 'forgetpass'])->name('password.forget.post');
@@ -45,11 +35,7 @@ Route::post('forgetpass', [passwordController::class, 'forgetpass'])->name('pass
 Route::get('/reset-password/{token}', [passwordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [passwordController::class, 'resetPassword'])->name('password.update');
 
-/*
-|--------------------------------------------------------------------------
-| 4. AUTH REQUIRED (LOGIN HO CHUKA HAI)
-|--------------------------------------------------------------------------
-*/
+ // AUTH REQUIRED (LOGIN HO CHUKA HAI)
 
 Route::middleware('auth')->group(function () {
 
@@ -58,11 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
 });
 
-/*
-|--------------------------------------------------------------------------
-| 5. FULLY PROTECTED (AUTH + 2FA)
-|--------------------------------------------------------------------------
-*/
+ // FULLY PROTECTED (AUTH + 2FA)
+
 
 Route::middleware(['auth', '2fa'])->group(function () {
 
@@ -85,11 +68,8 @@ Route::middleware(['auth', '2fa'])->group(function () {
     Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
 });
 
-/*
-|--------------------------------------------------------------------------
-| 6. LOGOUT
-|--------------------------------------------------------------------------
-*/
+ // LOGOUT
+
 
 Route::post('logout', function (Request $req) {
 
