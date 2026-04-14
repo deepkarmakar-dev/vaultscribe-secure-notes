@@ -61,8 +61,8 @@ Route::middleware(['auth', '2fa'])->group(function () {
     Route::get('/notes/trash', [NoteController::class, 'showtrash'])->name('notes.trash');
     Route::patch('/notes/trash/restore-all', [NoteController::class, 'restoreAll'])->name('notes.restoreAll');
     Route::delete('/notes/trash/delete-all', [NoteController::class, 'forcedeleteall'])->name('notes.deleteAll');
-    Route::patch('/notes/{id}/restore', [NoteController::class, 'restore'])->name('notes.restore');
-    Route::delete('/notes/{id}/delete', [NoteController::class, 'forcedelete'])->name('notes.forceDelete');
+    Route::patch('/notes/{note}/restore', [NoteController::class, 'restore'])->name('notes.restore');
+    Route::delete('/notes/{note}/delete', [NoteController::class, 'forcedelete'])->name('notes.forceDelete');
 
     // Disable 2FA
     Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
