@@ -19,8 +19,16 @@ jobs:
           port: 2222
           script: |
             cd /var/www/vaultscribe-secure-notes
-            git pull origin main
-            composer install --no-interaction --prefer-dist
+
+            # Always force sync (important)
+            git fetch origin
+            git reset --hard origin/main
+
+            # Install deps
+            composer install --no-interaction --prefer-dist --no-dev
+
+            # Laravel optimize
             php artisan migrate --force
-            php artisan config:clear
-            php artisan cache:clear
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
