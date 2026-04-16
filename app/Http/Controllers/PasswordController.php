@@ -62,11 +62,12 @@ class PasswordController extends Controller
         $req->only('email')
     );
 
-    
+ 
 
     // 3 Response Handle
     if ($status === Password::RESET_LINK_SENT) {
         session()->forget('login_attempts');
+        
         return back()->with('status', 'Reset link sent to your email');
     } else {
         session()->put('login_attempts', $attempts + 1);
@@ -112,6 +113,13 @@ public function resetPassword(Request $request)
      //  After 3 failed attempts → Captcha required
     if ($attempts >= 3) {
 
+    ActivityLog::create([
+    'user_id' => null,
+    'action' => 'captcha_triggered',
+    'ip_address' => $request->ip(),
+    'user_agent' => $request->userAgent(),
+]);
+
         if (!$request->filled('g-recaptcha-response')) {
             return back()->withErrors([
                 'email' => 'Captcha required'
@@ -156,7 +164,17 @@ public function resetPassword(Request $request)
         session()->forget('login_attempts');
         Auth::logoutOtherDevices($request->password);
 
+       
+    
+
         $user = User::where('email', $request->email)->first();
+
+             ActivityLog::create([
+        'user_id' => $user->id,
+        'action' => 'password_reset_success',
+        'ip_address' => $request->ip(),
+        'user_agent' => $request->userAgent(),
+    ]);
 
 Mail::raw("Your password has been changed successfully.\n\nIf this was not you, please contact support immediately.", function ($message) use ($user) {
     $message->to($user->email)
@@ -167,6 +185,14 @@ Mail::raw("Your password has been changed successfully.\n\nIf this was not you, 
             ->with('status', 'Password reset successful');
        
     }
+
+      ActivityLog::create([
+    'user_id' => null,
+    'action' => 'password_reset_failed',
+    'ip_address' => $request->ip(),
+    'user_agent' => $request->userAgent(),
+]);
+
     session()->put('login_attempts', $attempts + 1);
     return back()->withErrors(['email' => 'Invalid or expired link']);
 }

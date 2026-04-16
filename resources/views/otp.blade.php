@@ -15,7 +15,7 @@
         <div class="msg">{{ $errors->first('otp') }}</div>
     @endif
 
-    <form method="POST" action="{{ route('otp.verify') }}">
+    <form method="POST" action="{{ route('otp.verify.post') }}">
         @csrf
 
         <input

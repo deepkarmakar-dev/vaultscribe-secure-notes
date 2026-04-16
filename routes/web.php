@@ -4,13 +4,14 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\registerController;
+use App\Http\Controllers\OtpController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\passwordController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\NoteController;
 use App\Models\ActivityLog;
 
-// /  PUBLIC ROUTES (Guest only)
+//   PUBLIC ROUTES 
 
 
 Route::get('/', fn() => view('log'))->name('home');
@@ -21,12 +22,20 @@ Route::post('log', [AuthController::class, 'logstore'])->middleware('throttle:5,
 Route::get('register', [registerController::class, 'register'])->name('register');
 Route::post('register', [registerController::class, 'store']);
 
- // 2FA ROUTES (IMPORTANT — NO auth middleware)
+
+// OTP PAGE 
+Route::get('/otp', [otpController::class, 'otp'])->name('otp.verify');
+
+// OTP VERIFY 
+Route::post('/otp', [otpController::class, 'verifyOtp'])->name('otp.verify.post');
+
+
+ // 2FA ROUTES 
 
 Route::get('/2fa/challenge', [TwoFactorController::class, 'challenge'])->name('2fa.challenge');
 Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->name('2fa.verify');
 
- // PASSWORD RESET
+ //    PASSWORD RESET
 
 
 Route::get('forget', [passwordController::class, 'forget'])->name('forget');
@@ -35,39 +44,38 @@ Route::post('forgetpass', [passwordController::class, 'forgetpass'])->name('pass
 Route::get('/reset-password/{token}', [passwordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [passwordController::class, 'resetPassword'])->name('password.update');
 
- // AUTH REQUIRED (LOGIN HO CHUKA HAI)
+ // AUTH REQUIRED 
 
 Route::middleware('auth')->group(function () {
 
-    // 2FA setup (first time enable)
+    // 2FA setup 
     Route::get('/2fa/setup', [TwoFactorController::class, 'setup'])->name('2fa.setup');
     Route::post('/2fa/enable', [TwoFactorController::class, 'enable'])->name('2fa.enable');
 });
 
- // FULLY PROTECTED (AUTH + 2FA)
-
+ //  fully protected
 
 Route::middleware(['auth', '2fa'])->group(function () {
 
     Route::get('/dashboard', [NoteController::class, 'dashboard'])->name('dashboard');
 
  // Notes
-Route::post('/notes', [NoteController::class, 'dashboardValue'])->name('notes.store');
+       Route::post('/notes', [NoteController::class, 'dashboardValue'])->name('notes.store');
 
-Route::get('/notes/{note}/edit', [NoteController::class, 'notesedit'])->name('notes.edit');
+         Route::get('/notes/{note}/edit', [NoteController::class, 'notesedit'])->name('notes.edit');
 
 Route::put('/notes/{note}', [NoteController::class, 'notesupdate'])->name('notes.update');
 
-Route::delete('/notes/{note}', [NoteController::class, 'notesdelete'])->name('notes.delete');
+        Route::delete('/notes/{note}', [NoteController::class, 'notesdelete'])->name('notes.delete');
 
 // Trash
 Route::get('/notes/trash', [NoteController::class, 'showtrash'])->name('notes.trash');
 
-Route::patch('/notes/trash/restore-all', [NoteController::class, 'restoreAll'])->name('notes.restoreAll');
+       Route::patch('/notes/trash/restore-all', [NoteController::class, 'restoreAll'])->name('notes.restoreAll');
 
-Route::delete('/notes/trash/delete-all', [NoteController::class, 'forcedeleteall'])->name('notes.deleteAll');
+   Route::delete('/notes/trash/delete-all', [NoteController::class, 'forcedeleteall'])->name('notes.deleteAll');
 
-     //  IMPORTANT (match with controller $id)
+     //  IMPORTANT 
 Route::patch('/notes/{id}/restore', [NoteController::class, 'restore'])->name('notes.restore');
 
 Route::delete('/notes/{id}/force-delete', [NoteController::class, 'forcedelete'])->name('notes.forceDelete');
