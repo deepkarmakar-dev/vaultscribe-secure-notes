@@ -11,40 +11,28 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: '8.3' # Aapke VPS se match karta hua
 
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Copy .env
-        run: cp .env.example .env
-
-      - name: Set DB to sqlite
+      - name: Setup App Environment
         run: |
-          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
-
-      - name: Create sqlite DB
-        run: |
+          cp .env.example .env
+          php artisan key:generate
           mkdir -p database
           touch database/database.sqlite
-          chmod -R 777 database
+          # SQLite settings force karein
+          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=database\/database.sqlite/' .env
 
-      - name: Generate app key
-        run: php artisan key:generate
+      - name: Run Migrations
+        run: php artisan migrate --force
 
-      - name: Clear config
-        run: php artisan config:clear
-
-      - name: Run migrations fresh
-        run: php artisan migrate:fresh --force
-
-      - name: Skip tests (temporary)
-        run: echo "Skipping tests"
-
-      - name: Skip frontend build
-        run: echo "Skipping npm / vite build"
+      - name: Check Health
+        run: php artisan about

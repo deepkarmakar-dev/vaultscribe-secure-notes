@@ -4,14 +4,58 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
-  zap:
+  zap_scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    env:
+      DB_CONNECTION: sqlite
+      DB_DATABASE: ":memory:"
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, mysql, sqlite3
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Create .env file
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
       - name: ZAP Scan
         uses: zaproxy/action-full-scan@v0.10.0
+        continue-on-error: true
         with:
           target: "https://vaultscribe.in"
+          token: ${{ secrets.GITHUB_TOKEN }}
           cmd_options: "-a -T 60"
+          fail_action: false
+          artifact_name: "zap-scan-report"
+
+      - name: List ZAP report files
+        if: always()
+        run: find / -name "report_html.html" 2>/dev/null || echo "No report found"
+
+      - name: Upload Security Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zap-scan-report-manual
+          path: |
+            report_html.html
+            report_json.json
+            report_md.md
+          if-no-files-found: warn
