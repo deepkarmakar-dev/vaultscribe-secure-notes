@@ -19,8 +19,8 @@ class OtpController extends Controller
 
     public function otp()
     {
-        if (!session('otp_email')) {
-            return redirect()->route('log');
+        if (!session('pending_user')) {
+            return redirect()->route('log')->withErrors(['error' => 'Please register first.']);
         }
 
         return view('otp');
@@ -28,15 +28,25 @@ class OtpController extends Controller
 
     public function verifyOtp(Request $req)
     {
-    $req->validate([
-        'otp' => 'required|digits:6',
-    ]);
+        $req->validate([
+            'otp' => 'required|digits:6',
+        ]);
+       
+        if(session('registration_otp') != $req->otp) 
+        {
+           return back()->withErrors(['otp'=>'invalid otp']);   
+        }  // $userData = [
+    //     'name' => $request->name,
+    //     'email' => $request->email,
+    //     'password' => $pepperedPassword, // Original ya peppered password
+    // ];
+    // session(['pending_user' => $userData]);
+ 
+    $userData = session('pending_user');
 
-    $email = session('otp_email');
-    if (!$email) {
-        return redirect()->route('log');
-    }
 
+
+   
     // IMPROVEMENT: Track OTP attempts using session
     $attempts = session()->get('otp_attempts', 0);
 
@@ -47,27 +57,27 @@ class OtpController extends Controller
             ->withErrors(['otp' => 'Too many OTP attempts. Please login again.']);
     }
 
-    $user = User::where('email', $email)->first();
 
-    if (!$user ||!$user->otp ||now()->greaterThan($user->otp_expires_at) ||!Hash::check(trim($req->otp), $user->otp)) {
-        // IMPROVEMENT: Increase OTP attempt count
-        session()->put('otp_attempts', $attempts + 1);
-
-        return back()->withErrors([
-            'otp' => 'Invalid or expired OTP'
+    if ($userData) {
+        $user = User::create([
+            'name'              => $userData['name'],
+            'email'             => $userData['email'],
+            'password'          => $userData['password'], // Hash pehle hi ho chuka hai
+            'email_verified_at' => now(),
         ]);
+
+
     }
 
-    // OTP verified successfully
-    $user->update([
-        'otp' => null,
-        'otp_expires_at' => null,
-        'email_verified_at' => now(),
-    ]);
 
-    // IMPROVEMENT: Reset OTP session data after success
-    session()->forget(['otp_email', 'otp_attempts']);
 
-    return redirect()->route('log');
-}
+    Auth::login($user);
+    session()->forget(['pending_user', 'registration_otp', 'otp_attempts']);
+
+    return redirect()->route('dashboard')->with('success', 'Registration successful!');
+
+
+    return redirect()->route('log')->withErrors(['otp' => 'Something went wrong, please try again.']);
+    }
+
 }

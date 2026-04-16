@@ -51,28 +51,27 @@ class RegisterController extends Controller
     // Note: Ensure HASH_PEPPER is set in .env
     $pepperedPassword = hash_hmac('sha256', $request->password, config('app.pepper', env('HASH_PEPPER')));
     
-    $user = User::create([
+    // $user = User::create([
+    //     'name' => $request->name,
+    //     'email' => $request->email,
+    //     'password' => Hash::make($pepperedPassword),
+    // ]);
+    $userData = [
         'name' => $request->name,
         'email' => $request->email,
-        'password' => Hash::make($pepperedPassword),
-    ]);
-
+        'password' => $pepperedPassword, // Original ya peppered password
+    ];
+    session(['pending_user' => $userData]);
     // 4. Handle OTP
     $otp = random_int(100000, 999999);
     
-    $user->update([
-        'otp' => Hash::make($otp), // Secure, but ensure you use Hash::check in the verify step
-        'otp_expires_at' => now()->addMinutes(5),
-    ]);
+    $email = $request->email;
 
-    // 5. Send Notification
-    // Pro-tip: Use a Mailable class for better formatting and queueing
-    Mail::raw("Your OTP is: $otp. It expires in 5 minutes.", function ($message) use ($user) {
-        $message->to($user->email)->subject('Verify Your Account');
+    Mail::raw("Your OTP is: $otp. It expires in 5 minutes.", function ($message) use ($email) {
+        $message->to($email)->subject('Verify Your Account');
     });
-
-    session(['otp_email' => $user->email]);
-
+    session(['registration_otp' => $otp]);
+    
     return redirect()->route('otp.verify');
 }
 }

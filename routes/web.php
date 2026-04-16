@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\OtpController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\passwordController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\NoteController;
 use App\Models\ActivityLog;
@@ -19,15 +19,15 @@ Route::get('/', fn() => view('log'))->name('home');
 Route::get('log', [AuthController::class, 'log'])->name('log');
 Route::post('log', [AuthController::class, 'logstore'])->middleware('throttle:5,1');
 
-Route::get('register', [registerController::class, 'register'])->name('register');
-Route::post('register', [registerController::class, 'store']);
+Route::get('register', [RegisterController::class, 'register'])->name('register');
+Route::post('register', [RegisterController::class, 'store']);
 
 
 // OTP PAGE 
-Route::get('/otp', [otpController::class, 'otp'])->name('otp.verify');
+Route::get('/otp', [OtpController::class, 'otp'])->name('otp.verify');
 
 // OTP VERIFY 
-Route::post('/otp', [otpController::class, 'verifyOtp'])->name('otp.verify.post');
+Route::post('/otp', [OtpController::class, 'verifyOtp'])->name('otp.verify.post');
 
 
  // 2FA ROUTES 
@@ -38,11 +38,11 @@ Route::post('/2fa/verify', [TwoFactorController::class, 'verify'])->name('2fa.ve
  //    PASSWORD RESET
 
 
-Route::get('forget', [passwordController::class, 'forget'])->name('forget');
-Route::post('forgetpass', [passwordController::class, 'forgetpass'])->name('password.forget.post');
+Route::get('forget', [PasswordController::class, 'forget'])->name('forget');
+Route::post('forgetpass', [PasswordController::class, 'forgetpass'])->name('password.forget.post');
 
-Route::get('/reset-password/{token}', [passwordController::class, 'showResetForm'])->name('password.reset');
-Route::post('/reset-password', [passwordController::class, 'resetPassword'])->name('password.update');
+Route::get('/reset-password/{token}', [PasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [PasswordController::class, 'resetPassword'])->name('password.update');
 
  // AUTH REQUIRED 
 
