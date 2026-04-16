@@ -14,7 +14,7 @@ use App\Models\ActivityLog;
 
 
      //  OTP PAGE
-class otpController extends Controller
+class OtpController extends Controller
 {
 
     public function otp()

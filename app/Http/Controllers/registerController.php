@@ -11,7 +11,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Password;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Cache;
-class registerController extends Controller
+class RegisterController extends Controller
 {
   public function register()
     {
