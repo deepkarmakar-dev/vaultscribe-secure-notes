@@ -162,7 +162,7 @@ public function resetPassword(Request $request)
     //  Response
     if ($status === Password::PASSWORD_RESET) {
         session()->forget('login_attempts');
-        Auth::logoutOtherDevices($request->password);
+        // Auth::logoutOtherDevices($request->password);
 
        
     
