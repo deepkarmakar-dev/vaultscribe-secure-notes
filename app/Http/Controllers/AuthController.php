@@ -18,19 +18,16 @@ class AuthController extends Controller
     
     public function logstore(Request $req)
     {
-        $attempts = session()->get('login_attempts', 0);
-
         $req->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $pepperedPassword = hash_hmac('sha256', $req->password, config('app.pepper', env('HASH_PEPPER')));
+        $attempts = session()->get('login_attempts', 0);
 
-        // CAPTCHA after 3 attempts
+        // CAPTCHA
         if ($attempts >= 3) {
 
-            // log only once when threshold reached
             if ($attempts == 3) {
                 ActivityLog::create([
                     'user_id' => null,
@@ -58,21 +55,26 @@ class AuthController extends Controller
             }
         }
 
+        // 🔐 Pepper (same as register)
+        $pepperedPassword = hash_hmac(
+            'sha256',
+            $req->password,
+            config('app.pepper')
+        );
+
         $user = User::where('email', $req->email)->first();
 
-        //  Invalid credentials
         if (!$user || !Hash::check($pepperedPassword, $user->password)) {
 
-            session()->put('login_attempts', $attempts + 1);
+            $attempts = session()->increment('login_attempts');
 
             ActivityLog::create([
-                'user_id' => $user?->id, 
+                'user_id' => $user?->id,
                 'action' => 'login_failed',
                 'ip_address' => $req->ip(),
                 'user_agent' => $req->userAgent(),
             ]);
 
-            //  suspicious detection
             if ($attempts >= 5) {
                 ActivityLog::create([
                     'user_id' => $user?->id,
@@ -82,23 +84,22 @@ class AuthController extends Controller
                 ]);
             }
 
+            sleep(1);
+
             return back()->withErrors(['email' => 'Invalid credentials']);
         }
 
-        // Email not verified
         if (!$user->email_verified_at) {
             return back()->withErrors(['email' => 'Please verify email first']);
         }
 
         session()->forget('login_attempts');
 
-        // 2FA
         if ($user->google2fa_enabled) {
             session(['2fa_user_id' => $user->id]);
             return redirect()->route('2fa.challenge');
         }
 
-        //  Login success
         Auth::login($user);
         $req->session()->regenerate();
 

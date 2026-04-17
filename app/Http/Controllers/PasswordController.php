@@ -23,57 +23,44 @@ class PasswordController extends Controller
         return view('forgetpassword');
     }
 
-   public function forgetpass(Request $req)
-{
-     $attempts = session()->get('login_attempts', 0);
-    // 1️ Validation
-    $req->validate([
-        'email' => 'required|email'
-    ]);
-
-
-      //  After 3 failed attempts → Captcha required
-      if ($attempts >= 3) {
-
-        if (!$req->filled('g-recaptcha-response')) {
-            return back()->withErrors([
-                'email' => 'Captcha required'
-            ]);
+    public function forgetpass(Request $req)
+    {
+        $attempts = session()->get('forgot_attempts', 0);
+    
+        $req->validate([
+            'email' => 'required|email'
+        ]);
+    
+        // CAPTCHA after 3 attempts
+        if ($attempts >= 3) {
+            if (!$req->filled('g-recaptcha-response')) {
+                return back()->withErrors(['email' => 'Captcha required']);
+            }
+    
+            $response = Http::asForm()->post(
+                'https://www.google.com/recaptcha/api/siteverify',
+                [
+                    'secret' => env('NOCAPTCHA_SECRET'),
+                    'response' => $req->input('g-recaptcha-response'),
+                    'remoteip' => $req->ip(),
+                ]
+            );
+    
+            if (!$response->json('success')) {
+                return back()->withErrors(['email' => 'Captcha failed']);
+            }
         }
-
-        $response = Http::asForm()->post(
-            'https://www.google.com/recaptcha/api/siteverify',
-            [
-                'secret' => env('NOCAPTCHA_SECRET'),
-                'response' => $req->input('g-recaptcha-response'),
-                'remoteip' => $req->ip(),
-            ]
-        );
-
-        if (!$response->json('success')) {
-            return back()->withErrors([
-                'email' => 'Captcha failed'
-            ]);
+    
+        $status = Password::sendResetLink($req->only('email'));
+    
+        if ($status === Password::RESET_LINK_SENT) {
+            session()->forget('forgot_attempts');
+            return back()->with('status', 'Reset link sent');
         }
-    }
-
-    //  Reset Link Send
-    $status = Password::sendResetLink(
-        $req->only('email')
-    );
-
- 
-
-    // 3 Response Handle
-    if ($status === Password::RESET_LINK_SENT) {
-        session()->forget('login_attempts');
-        
-        return back()->with('status', 'Reset link sent to your email');
-    } else {
-        session()->put('login_attempts', $attempts + 1);
+    
+        session()->put('forgot_attempts', $attempts + 1);
         return back()->with('status', 'If email exists, reset link sent');
     }
-}
 
 public function showResetForm(Request $req, $token)
 {
@@ -84,21 +71,23 @@ public function showResetForm(Request $req, $token)
 }
 public function resetPassword(Request $request)
 {
-     $attempts = session()->get('login_attempts', 0);
+    $attempts = session()->get('reset_attempts', 0);
 
     $request->validate([
-    'email' => 'required|string|email|max:255|exists:users,email',
-    'password' => [
-        'required',
-        'confirmed',
-        'min:10',
-        'regex:/[A-Z]/',
-        'regex:/[a-z]/',
-        'regex:/[0-9]/',
-        'regex:/[@$!%*?&]/',
-    ],
-]);
-     // 2. Weak Password Check (Optimized)
+        'token' => 'required',
+        'email' => 'required|string|email|max:255|exists:users,email',
+        'password' => [
+            'required',
+            'confirmed',
+            'min:10',
+            'regex:/[A-Z]/',
+            'regex:/[a-z]/',
+            'regex:/[0-9]/',
+            'regex:/[@$!%*?&]/',
+        ],
+    ]);
+
+    // Weak password check
     $passwordLower = strtolower($request->password);
     $weakPasswords = Cache::remember('weak_passwords', 86400, function () {
         $path = storage_path('app/weak_passwords.txt');
@@ -109,21 +98,20 @@ public function resetPassword(Request $request)
         return back()->withErrors(['password' => 'This password is too common.']);
     }
 
-   
-     //  After 3 failed attempts → Captcha required
+    // CAPTCHA
     if ($attempts >= 3) {
 
-    ActivityLog::create([
-    'user_id' => null,
-    'action' => 'captcha_triggered',
-    'ip_address' => $request->ip(),
-    'user_agent' => $request->userAgent(),
-]);
+        if ($attempts == 3) {
+            ActivityLog::create([
+                'user_id' => null,
+                'action' => 'captcha_triggered',
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+        }
 
         if (!$request->filled('g-recaptcha-response')) {
-            return back()->withErrors([
-                'email' => 'Captcha required'
-            ]);
+            return back()->withErrors(['email' => 'Captcha required']);
         }
 
         $response = Http::asForm()->post(
@@ -136,70 +124,58 @@ public function resetPassword(Request $request)
         );
 
         if (!$response->json('success')) {
-            return back()->withErrors([
-                'email' => 'Captcha failed'
-            ]);
+            return back()->withErrors(['email' => 'Captcha failed']);
         }
     }
 
-
-    //  Password Reset Logic
+    // Reset
     $status = Password::reset(
         $request->only('email', 'password', 'password_confirmation', 'token'),
-
         function ($user, $password) {
 
-           // Note: Ensure HASH_PEPPER is set in .env
-    $pepperedPassword = hash_hmac('sha256', $password, config('app.pepper', env('HASH_PEPPER')));
-    
+            $pepperedPassword = hash_hmac(
+                'sha256',
+                $password,
+                config('app.pepper') //  FIXED
+            );
 
-           $user->update([
+            $user->update([
                 'password' => Hash::make($pepperedPassword)
             ]);
         }
     );
 
-    //  Response
     if ($status === Password::PASSWORD_RESET) {
-        session()->forget('login_attempts');
-        // Auth::logoutOtherDevices($request->password);
 
-       
-    
+        session()->forget('reset_attempts');
 
         $user = User::where('email', $request->email)->first();
 
-             ActivityLog::create([
-        'user_id' => $user->id,
-        'action' => 'password_reset_success',
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'action' => 'password_reset_success',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        Mail::raw("Your password has been changed successfully.", function ($message) use ($user) {
+            $message->to($user->email)->subject('Password Changed Alert');
+        });
+
+        return redirect()->route('log')->with('status', 'Password reset successful');
+    }
+
+    session()->increment('reset_attempts');
+
+    ActivityLog::create([
+        'user_id' => null,
+        'action' => 'password_reset_failed',
         'ip_address' => $request->ip(),
         'user_agent' => $request->userAgent(),
     ]);
 
-Mail::raw("Your password has been changed successfully.\n\nIf this was not you, please contact support immediately.", function ($message) use ($user) {
-    $message->to($user->email)
-            ->subject('Password Changed Alert');
-});
-
-        return redirect()->route('log')
-            ->with('status', 'Password reset successful');
-       
-    }
-
-      ActivityLog::create([
-    'user_id' => null,
-    'action' => 'password_reset_failed',
-    'ip_address' => $request->ip(),
-    'user_agent' => $request->userAgent(),
-]);
-
-    session()->put('login_attempts', $attempts + 1);
     return back()->withErrors(['email' => 'Invalid or expired link']);
 }
 
+  
 }
-
-
-
-   
-    

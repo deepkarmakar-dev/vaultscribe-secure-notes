@@ -19,6 +19,12 @@ Route::get('/', fn() => view('log'))->name('home');
 Route::get('log', [AuthController::class, 'log'])->name('log');
 Route::post('log', [AuthController::class, 'logstore'])->middleware('throttle:5,1');
 
+ // LOGOUT
+ Route::get('/logout', function () {
+    return redirect()->route('log');
+});
+
+
 Route::get('register', [RegisterController::class, 'register'])->name('register');
 Route::post('register', [RegisterController::class, 'store']);
 
@@ -82,8 +88,6 @@ Route::delete('/notes/{id}/force-delete', [NoteController::class, 'forcedelete']
     // Disable 2FA
     Route::post('/2fa/disable', [TwoFactorController::class, 'disable'])->name('2fa.disable');
 });
-
- // LOGOUT
 
 
 Route::post('logout', function (Request $req) {
