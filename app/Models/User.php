@@ -5,25 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-// use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 
-use Filament\Models\Contracts\FilamentUser; // Ye line add karein
-use Filament\Panel; // Ye line add karein
+// Filament ki saari imports hata di hain 
 
-class User extends Authenticatable implements FilamentUser // <-- Ye "implements" add karein
+class User extends Authenticatable 
 {
     use HasFactory, Notifiable;
 
     protected $table = "users";
 
-    public function canAccessPanel(Panel $panel): bool
-    {
-        return true; 
-    }
-
-    // ... baki aapka code
-
+    // canAccessPanel function ko delete kar diya hai 
 
     protected $fillable = [
         'name',
@@ -52,7 +44,7 @@ class User extends Authenticatable implements FilamentUser // <-- Ye "implements
         ];
     }
 
-    // Safe encryption for 2FA secret
+    //  Safe encryption for 2FA secret 
     protected function google2faSecret(): Attribute
     {
         return new Attribute(
