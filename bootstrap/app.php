@@ -16,15 +16,15 @@ return Application::configure(basePath: dirname(__DIR__))
 
     ->withMiddleware(function (Middleware $middleware): void {
 
-        // ✅ Route Middleware Alias
+        //  Route Middleware Alias
         $middleware->alias([
             '2fa' => Ensure2FAVerified::class,
         ]);
 
-        // ✅ Global Security Headers (VERY GOOD PRACTICE)
+        //  Global Security Headers (VERY GOOD PRACTICE)
         $middleware->append(SecurityHeaders::class);
 
-        // ✅ Redirect guest (not logged in)
+        //  Redirect guest (not logged in)
         $middleware->redirectGuestsTo(function () {
             return route('log');
         });
