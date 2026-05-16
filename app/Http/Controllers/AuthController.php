@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     public function log()
     {
-        return view('log');
+        return view('login');
     }
     
     public function logstore(Request $req)
@@ -55,7 +55,7 @@ class AuthController extends Controller
             }
         }
 
-        // 🔐 Pepper (same as register)
+        //  Pepper (same as register)
         $pepperedPassword = hash_hmac(
             'sha256',
             $req->password,

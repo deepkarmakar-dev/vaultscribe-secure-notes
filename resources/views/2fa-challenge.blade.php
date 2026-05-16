@@ -1,45 +1,45 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
 
-@section('content')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div class="min-h-[80vh] flex items-center justify-center">
+    <title>2FA Verification</title>
 
+    <link rel="stylesheet" href="{{ asset('style.css') }}">
+</head>
 
-<div class="w-full max-w-md bg-white shadow rounded-lg">
+<body>
 
-    <div class="border-b px-6 py-3 text-center font-semibold">
-        Two-Factor Authentication
-    </div>
+<div class="auth-container">
 
-    <div class="p-6">
+    <div class="box">
+
+        <h2>Two-Factor Authentication</h2>
 
         @if ($errors->any())
-            <div class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
+            <div class="error">
                 {{ $errors->first() }}
             </div>
         @endif
 
-        <p class="text-center text-gray-600 mb-4">
-            Enter the 6-digit OTP from your Authenticator App
+        <p class="auth-text">
+            Enter the 6-digit code from Google Authenticator
         </p>
 
         <form method="POST" action="{{ route('2fa.verify') }}">
             @csrf
 
-            <div class="mb-4">
-                <input
-                    type="text"
-                    name="one_time_password"
-                    maxlength="6"
-                    placeholder="Enter OTP"
-                    class="w-full border border-gray-300 rounded px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                    autofocus>
-            </div>
+            <input
+                type="text"
+                name="one_time_password"
+                maxlength="6"
+                placeholder="000000"
+                required
+                autofocus>
 
-            <button
-                type="submit"
-                class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+            <button type="submit">
                 Verify & Login
             </button>
 
@@ -49,7 +49,5 @@
 
 </div>
 
-
-</div>
-
-@endsection
+</body>
+</html>

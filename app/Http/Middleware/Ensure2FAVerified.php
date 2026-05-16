@@ -13,7 +13,7 @@ class Ensure2FAVerified
     {
         //  Allow only valid states
         if (!Auth::check() && !session()->has('2fa_user_id')) {
-            return redirect()->route('log');
+            return redirect()->route('login');
         }
 
         //  Skip 2FA routes

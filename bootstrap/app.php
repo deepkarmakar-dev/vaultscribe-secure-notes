@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         //  Redirect guest (not logged in)
         $middleware->redirectGuestsTo(function () {
-            return route('log');
+            return route('login');
         });
 
     })

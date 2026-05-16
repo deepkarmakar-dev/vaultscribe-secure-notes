@@ -25,7 +25,7 @@
     <button>Register</button>
     <div class="footer-links">
            
-            <a href="{{route('log')}}">Login</a>
+            <a href="{{route('login')}}">Login</a>
         </div>
 </form>
 </div>

@@ -10,21 +10,13 @@
         "bacon/bacon-qr-code": "*",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "livewire/flux": "^2.9.0",
-        "livewire/livewire": "^4.0",
         "pragmarx/google2fa-laravel": "*"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "*",
         "fakerphp/faker": "^1.23",
-        "laravel/breeze": "*",
-        "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
-        "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
-        "nunomaduro/collision": "^8.6",
-        "pestphp/pest": "*",
-        "pestphp/pest-plugin-laravel": "*"
+        "nunomaduro/collision": "^8.6"
     },
     "autoload": {
         "psr-4": {
@@ -93,7 +85,6 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true,
             "php-http/discovery": true
         },
         "platform": {

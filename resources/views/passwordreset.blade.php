@@ -42,7 +42,7 @@
 
     <button>Reset Password</button> 
     <div class="footer-links">
-            <a href="{{ route('log') }}">Back to Login</a>
+            <a href="{{ route('login') }}">Back to Login</a>
         </div>
 </div>
 </form>

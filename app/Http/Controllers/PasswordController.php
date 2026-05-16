@@ -162,7 +162,7 @@ public function resetPassword(Request $request)
             $message->to($user->email)->subject('Password Changed Alert');
         });
 
-        return redirect()->route('log')->with('status', 'Password reset successful');
+        return redirect()->route('login')->with('status', 'Password reset successful');
     }
 
     session()->increment('reset_attempts');

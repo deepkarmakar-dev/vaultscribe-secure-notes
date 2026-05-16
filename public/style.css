@@ -6,38 +6,52 @@
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* 2. Body Styling (Background & Centering) */
+/* 2. Body Styling */
 body {
-    height: 100vh;
+    min-height: 100vh;
     background: linear-gradient(135deg, #020617, #0f172a, #020617);
     display: flex;
     justify-content: center;
     align-items: center;
     color: #e5e7eb;
-    overflow: hidden;
+    overflow-x: hidden;
+    padding: 20px;
 }
 
-/* 3. Main Login Card */
-.box {
-    width: 360px;
+/* 3. Main Card */
+.box,
+.twofa-card {
+    width: 100%;
+    max-width: 420px;
     background: #020617;
-    border: 1px solid #1f2933;
+    border: 1px solid #1f2937;
     border-radius: 14px;
-    padding: 28px;
+    padding: 30px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
     animation: fade 0.5s ease-out;
 }
 
+/* 4. Headings */
 h2 {
     text-align: center;
-    margin-bottom: 22px;
+    margin-bottom: 18px;
     color: #38bdf8;
     font-size: 24px;
     letter-spacing: 0.5px;
 }
 
-/* 4. Inputs & Buttons */
-input, button {
+/* 5. Text */
+.auth-text {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+    margin-bottom: 22px;
+    line-height: 1.5;
+}
+
+/* 6. Inputs & Buttons */
+input,
+button {
     width: 100%;
     padding: 12px 15px;
     margin: 10px 0;
@@ -50,12 +64,14 @@ input, button {
     font-size: 14px;
 }
 
+/* 7. Input Focus */
 input:focus {
     border-color: #38bdf8;
     box-shadow: 0 0 8px rgba(56, 189, 248, 0.3);
     background: #0f172a;
 }
 
+/* 8. Button */
 button {
     background: #38bdf8;
     color: #020617;
@@ -77,14 +93,36 @@ button:active {
     transform: translateY(0);
 }
 
-/* 5. ReCAPTCHA Styling (If visible) */
-.g-recaptcha {
-    margin: 15px 0;
-    display: flex;
-    justify-content: center;
+/* 9. QR Section */
+.qr-section {
+    text-align: center;
+    margin-bottom: 22px;
 }
 
-/* 6. Links Fix (Forget & Register) */
+.qr-wrapper {
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+/* 10. Secret Key */
+.secret-box {
+    background: #0f172a;
+    border: 1px solid #1f2937;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.secret-box code {
+    color: #38bdf8;
+    font-size: 13px;
+    word-break: break-all;
+}
+
+/* 11. Links */
 .footer-links {
     display: flex;
     justify-content: space-between;
@@ -105,7 +143,7 @@ button:active {
     text-decoration: underline;
 }
 
-/* 7. Error & Success Messages */
+/* 12. Error Messages */
 .error {
     background: rgba(248, 113, 113, 0.1);
     border-left: 3px solid #f87171;
@@ -117,6 +155,7 @@ button:active {
     text-align: center;
 }
 
+/* 13. Success Messages */
 .success {
     background: rgba(52, 211, 153, 0.1);
     border-left: 3px solid #34d399;
@@ -128,14 +167,34 @@ button:active {
     text-align: center;
 }
 
-/* 8. Animations */
+/* 14. ReCAPTCHA */
+.g-recaptcha {
+    margin: 15px 0;
+    display: flex;
+    justify-content: center;
+}
+
+/* 15. Responsive */
+@media (max-width: 500px) {
+
+    .box,
+    .twofa-card {
+        padding: 22px;
+    }
+
+}
+
+/* 16. Animation */
 @keyframes fade {
+
     from {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
+
 }

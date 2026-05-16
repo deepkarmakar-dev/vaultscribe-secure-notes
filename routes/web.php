@@ -14,14 +14,14 @@ use App\Models\ActivityLog;
 //   PUBLIC ROUTES 
 
 
-Route::get('/', fn() => view('log'))->name('home');
+Route::get('/', fn() => view('login'))->name('home');
 
-Route::get('log', [AuthController::class, 'log'])->name('log');
-Route::post('log', [AuthController::class, 'logstore'])->middleware('throttle:5,1');
+Route::get('login', [AuthController::class, 'log'])->name('login');
+Route::post('login', [AuthController::class, 'logstore'])->middleware('throttle:5,1');
 
  // LOGOUT
  Route::get('/logout', function () {
-    return redirect()->route('log');
+    return redirect()->route('login');
 });
 
 
@@ -105,6 +105,6 @@ Route::post('logout', function (Request $req) {
     $req->session()->invalidate();
     $req->session()->regenerateToken();
 
-    return redirect()->route('log');
+    return redirect()->route('login');
 
 })->name('logout');

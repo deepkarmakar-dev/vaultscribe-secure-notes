@@ -9,7 +9,7 @@ use App\Models\User;
 
 class RegisterController extends Controller
 {
-    // show register page (GET /register)
+    // show register page 
     public function register()
     {
         return view('register');

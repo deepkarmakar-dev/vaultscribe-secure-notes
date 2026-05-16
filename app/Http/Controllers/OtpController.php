@@ -13,7 +13,7 @@ class OtpController extends Controller
     {
         if (!session('pending_user')) {
             return redirect()->route('log')
-                ->withErrors(['error' => 'Please register first']);
+                ->withErrors(['error' => 'invalid credentials']);
         }
 
         return view('otp');
@@ -30,7 +30,7 @@ class OtpController extends Controller
         if ($attempts >= 5) {
             session()->flush();
 
-            return redirect()->route('log')
+            return redirect()->route('login')
                 ->withErrors(['otp' => 'Too many attempts']);
         }
 
@@ -56,8 +56,8 @@ class OtpController extends Controller
         if (User::where('email', $userData['email'])->exists()) {
             session()->flush();
 
-            return redirect()->route('log')
-                ->withErrors(['email' => 'User already exists']);
+            return redirect()->route('login')
+                ->withErrors(['email' => 'invalid credentials']);
         }
 
         $user = User::create([
