@@ -1,6 +1,14 @@
-# ================================
-# GITLEAKS & SBOM 
-# ================================
+name: VaultScribe Security Scans
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
   security-scans:
     runs-on: ubuntu-latest
     steps:
