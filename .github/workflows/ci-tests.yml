@@ -1,0 +1,36 @@
+# ================================
+# LARAVEL TESTS & HEALTH CHECK
+# ================================
+  test-and-health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3' # Make sure this matches your VaultScribe PHP version
+
+      - name: Install Composer Dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare Laravel Environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          touch database/database.sqlite
+          sed -i -e "s/DB_CONNECTION=.*/DB_CONNECTION=sqlite/" .env
+          sed -i -e "s/DB_DATABASE=.*/DB_DATABASE=.*\/database\/database.sqlite/" .env
+
+      - name: Set Permissions
+        run: chmod -R 777 storage bootstrap/cache
+
+      - name: Run Laravel Tests
+        run: php artisan test
+
+      - name: Run Health Check
+        run: |
+          php artisan about
+          php artisan route:list
+          php artisan config:show app
