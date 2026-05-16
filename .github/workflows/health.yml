@@ -1,0 +1,7 @@
+# ================================
+# POST DEPLOY HEALTH CHECK
+# ================================
+
+- name: Application Health Check
+  run: |
+    curl -I http://localhost

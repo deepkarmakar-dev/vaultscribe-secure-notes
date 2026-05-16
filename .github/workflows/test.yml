@@ -1,0 +1,12 @@
+# ================================
+# TEST + HEALTH CHECK
+# ================================
+
+- name: Run Laravel Tests
+  run: php artisan test
+
+- name: Run Health Check
+  run: |
+    php artisan about
+    php artisan route:list
+    php artisan config:show app

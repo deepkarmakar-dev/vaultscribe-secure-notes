@@ -1,0 +1,35 @@
+# ================================
+# ROLLBACK DEPLOYMENT
+# ================================
+
+name: Rollback Deployment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Rollback Application
+        uses: appleboy/ssh-action@v1.0.3
+
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 2222
+
+          script: |
+            cd /opt/vaultscribe/vaultscribe-secure-notes
+
+            # Rollback previous commit
+            git reset --hard HEAD~1
+
+            # Restart containers
+            docker compose down
+            docker compose up -d --build
+
+            # Laravel optimize
+            docker exec vaultscribe php artisan optimize:clear
