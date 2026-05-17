@@ -1,4 +1,4 @@
-name: Snyk Scan
+name: Snyk Security Scan
 
 on:
   push:
@@ -10,21 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.3
 
-      - name: Install dependencies
+      - name: Install Composer Dependencies
         run: composer install --no-interaction --prefer-dist
 
-      - name: Run Snyk
+      - name: Run Snyk Scan
         uses: snyk/actions/php@master
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: test
           args: --file=composer.json
+
