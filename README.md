@@ -1,59 +1,56 @@
 ````markdown
 # 🔐 VaultScribe – Secure Notes Application
 
-VaultScribe is a security-focused Laravel application designed for secure note management, infrastructure hardening, runtime monitoring, and DevSecOps automation.
+VaultScribe is a security-focused Laravel application built for secure note management, infrastructure hardening, runtime monitoring, and DevSecOps automation.
 
-The project combines application security, cloud security, attack visibility, containerized deployment, centralized logging, and automated CI/CD pipelines to create a production-ready secure environment.
+The project combines secure authentication, server-side encryption, attack visibility, centralized logging, containerized deployment, and automated CI/CD pipelines to create a production-ready secure environment.
+
+🌐 Live Demo: https://vaultscribe.in
 
 ---
 
 # 🏗️ Infrastructure & Security Architecture
 
 ```text
-                           ┌──────────────────────┐
-                           │      Internet        │
-                           └──────────┬───────────┘
-                                      │
-                                      ▼
-                         ┌────────────────────────┐
-                         │      Cloudflare        │
-                         │  DDoS / Edge Security  │
-                         │ SSL / Request Filter   │
-                         └──────────┬─────────────┘
-                                    │
-                                    ▼
-                    ┌────────────────────────────────┐
-                    │        Azure Virtual VM        │
-                    │         Ubuntu 24.04           │
-                    └──────────────┬─────────────────┘
-                                   │
-                    ┌──────────────▼──────────────┐
-                    │        UFW Firewall         │
-                    │       Azure NSG Rules       │
-                    └──────────────┬──────────────┘
-                                   │
-                                   ▼
-                    ┌─────────────────────────────┐
-                    │     Nginx Reverse Proxy     │
-                    │     + ModSecurity WAF       │
-                    │       + OWASP CRS           │
-                    └──────────────┬──────────────┘
-                                   │
-                 ┌─────────────────┴─────────────────┐
-                 │                                   │
-                 ▼                                   ▼
-     ┌─────────────────────┐          ┌─────────────────────┐
-     │ Laravel Application │          │ Monitoring Stack    │
-     │   Docker Container  │          │ Grafana / Loki      │
-     │                     │          │ Promtail            │
-     └──────────┬──────────┘          └──────────┬──────────┘
-                │                                │
-                ▼                                ▼
-      ┌────────────────────┐         ┌─────────────────────┐
-      │   MySQL Database   │         │ Security Monitoring │
-      │ Server-side        │         │ Falco / Fail2Ban    │
-      │ Encryption         │         │ Lynis / RKHunter    │
-      └────────────────────┘         └─────────────────────┘
+┌────────────┐
+│   Browser  │
+└─────┬──────┘
+      │
+      ▼
+┌────────────┐
+│ Cloudflare │
+│ DDoS / SSL │
+└─────┬──────┘
+      │
+      ▼
+┌────────────┐
+│   Nginx    │
+│ ModSecurity│
+│ OWASP CRS  │
+└─────┬──────┘
+      │
+      ▼
+┌─────────────────────────────┐
+│        Docker Stack         │
+├─────────────────────────────┤
+│ Laravel Application         │
+│ MySQL Database              │
+│ Server-side Encryption      │
+└─────────────┬───────────────┘
+              │
+              ▼
+┌─────────────────────────────┐
+│      Monitoring Stack       │
+├─────────────────────────────┤
+│ Grafana                     │
+│ Loki                        │
+│ Promtail                    │
+│ Fail2Ban                    │
+│ Falco                       │
+│ Lynis                       │
+│ RKHunter                    │
+│ Email Alerts                │
+└─────────────────────────────┘
 ````
 
 ---
@@ -62,14 +59,13 @@ The project combines application security, cloud security, attack visibility, co
 
 ## Authentication System
 
-* User registration
+* Secure user registration
 * Secure login system
 * Forgot password functionality
-* OTP email verification after registration
-* Logout protection
-* Unauthorized dashboard access blocked
+* OTP verification after registration
 * Session-based authentication
-* Secure password validation
+* Secure logout system
+* Unauthorized dashboard access blocked
 
 ---
 
@@ -108,10 +104,10 @@ Features include:
 
 * QR code generation
 * OTP verification
-* Encrypted 2FA secret handling
 * Login challenge verification
 * Enable / Disable 2FA
 * Session-based 2FA validation
+* Encrypted 2FA secret handling
 
 ---
 
@@ -140,13 +136,6 @@ Protected data includes:
 * Authentication-related sensitive values
 * 2FA secret storage
 
-Security implementation includes:
-
-* Laravel encryption mechanisms
-* Encrypted database storage
-* Secure handling of sensitive fields
-* Protected server-side data processing
-
 ---
 
 # 🔒 Access Control & Authorization
@@ -154,18 +143,18 @@ Security implementation includes:
 Security restrictions include:
 
 * Dashboard access blocked without authentication
-* Unauthorized route access protection
+* Unauthorized route protection
 * User isolation for notes
-* Session regeneration after login
 * Secure logout handling
+* Session regeneration after login
 
-A user can only view and manage their own notes.
+A user can only access and manage their own notes.
 
 ---
 
 # 🛡️ Web Security Protections
 
-VaultScribe includes protection against common web attacks including:
+VaultScribe includes protection against:
 
 * SQL Injection (SQLi)
 * Cross-Site Scripting (XSS)
@@ -179,8 +168,8 @@ Security protections implemented:
 * Content Security Policy (CSP)
 * Secure HTTP headers
 * Input validation
-* Blade escaping
 * Prepared statements
+* Blade escaping
 * CSRF middleware
 * Sanitized production error messages
 
@@ -216,7 +205,7 @@ Infrastructure stack includes:
 * Docker containerized deployment
 * Nginx reverse proxy
 * Cloudflare edge protection
-* MySQL database server
+* MySQL Docker container
 * GitHub Actions CI/CD
 
 ---
@@ -225,18 +214,18 @@ Infrastructure stack includes:
 
 Docker is used for:
 
-* Application deployment
-* Monitoring services
-* Logging stack
+* Laravel application deployment
+* MySQL database container
+* Monitoring stack services
 * Infrastructure isolation
 
 Containerized services include:
 
-* Laravel application
+* Laravel Application
+* MySQL
 * Grafana
 * Loki
 * Promtail
-* Monitoring stack services
 
 ---
 
@@ -293,12 +282,10 @@ Azure Network Security Groups configured for:
 
 Server SSH security includes:
 
-* Password login disabled
+* Password authentication disabled
 * SSH key-based authentication only
 * Custom SSH port configuration (2222)
 * Reduced brute-force attack surface
-
-SSH access does not allow password authentication.
 
 ---
 
@@ -415,10 +402,10 @@ VaultScribe is locally tested using:
 
 * Laravel Herd
 * Local MySQL environment
-* Local security validation
-* Manual penetration-style testing
+* Manual security validation
+* Local feature testing
 
-Workflow:
+Development workflow:
 
 1. Local development using Herd
 2. Local testing & validation
