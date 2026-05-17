@@ -7,53 +7,59 @@ The project combines secure authentication, server-side encryption, attack visib
 
 🌐 Live Demo: https://vaultscribe.in
 
----
+```text id="f9n2xr"
+                                🌐 INTERNET
+                                      │
+                                      ▼
+                        ┌─────────────────────────┐
+                        │       Cloudflare        │
+                        │  DDoS • SSL • WAF Edge │
+                        └───────────┬─────────────┘
+                                    │
+                                    ▼
+                    ┌────────────────────────────────┐
+                    │        Azure Ubuntu VM         │
+                    │        Hardened Server         │
+                    └──────────────┬─────────────────┘
+                                   │
+              ┌────────────────────┴────────────────────┐
+              │                                         │
+              ▼                                         ▼
+    ┌──────────────────────┐               ┌──────────────────────┐
+    │  UFW Firewall + NSG  │               │   SSH Hardening      │
+    │  Port Filtering      │               │ Key Auth • Port 2222 │
+    └──────────┬───────────┘               └──────────────────────┘
+               │
+               ▼
+        ┌─────────────────────┐
+        │  Nginx ReverseProxy │
+        │  ModSecurity + CRS  │
+        └──────────┬──────────┘
+                   │
+                   ▼
+        ┌──────────────────────────────┐
+        │         Docker Stack         │
+        ├──────────────────────────────┤
+        │ Laravel Application          │
+        │ MySQL Database               │
+        │ Server-side Encryption       │
+        └──────────┬───────────────────┘
+                   │
+                   ▼
+┌────────────────────────────────────────────────────┐
+│              Monitoring & Security                 │
+├────────────────────────────────────────────────────┤
+│ Grafana        → Dashboards & Visualization        │
+│ Loki           → Centralized Log Aggregation       │
+│ Promtail       → Log Shipping                      │
+│ Fail2Ban       → Intrusion Prevention              │
+│ Falco          → Runtime Threat Detection          │
+│ Lynis          → Security Auditing                 │
+│ RKHunter       → Rootkit Detection                 │
+│ Email Alerts   → Real-time Notifications           │
+└────────────────────────────────────────────────────┘
+```
 
-# 🏗️ Infrastructure & Security Architecture
-
-```text
-┌────────────┐
-│   Browser  │
-└─────┬──────┘
-      │
-      ▼
-┌────────────┐
-│ Cloudflare │
-│ DDoS / SSL │
-└─────┬──────┘
-      │
-      ▼
-┌────────────┐
-│   Nginx    │
-│ ModSecurity│
-│ OWASP CRS  │
-└─────┬──────┘
-      │
-      ▼
-┌─────────────────────────────┐
-│        Docker Stack         │
-├─────────────────────────────┤
-│ Laravel Application         │
-│ MySQL Database              │
-│ Server-side Encryption      │
-└─────────────┬───────────────┘
-              │
-              ▼
-┌─────────────────────────────┐
-│      Monitoring Stack       │
-├─────────────────────────────┤
-│ Grafana                     │
-│ Loki                        │
-│ Promtail                    │
-│ Fail2Ban                    │
-│ Falco                       │
-│ Lynis                       │
-│ RKHunter                    │
-│ Email Alerts                │
-└─────────────────────────────┘
-````
-
----
 
 # 🚀 Core Features
 
