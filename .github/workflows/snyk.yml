@@ -27,4 +27,4 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: test
-          # Yahan se --file=composer.json ko hata diya hai taaki Snyk auto-detect kar sake
+          args: --file=composer.lock
