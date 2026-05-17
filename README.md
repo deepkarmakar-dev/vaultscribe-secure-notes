@@ -1,8 +1,60 @@
+````markdown
 # 🔐 VaultScribe – Secure Notes Application
 
 VaultScribe is a security-focused Laravel application designed for secure note management, infrastructure hardening, runtime monitoring, and DevSecOps automation.
 
 The project combines application security, cloud security, attack visibility, containerized deployment, centralized logging, and automated CI/CD pipelines to create a production-ready secure environment.
+
+---
+
+# 🏗️ Infrastructure & Security Architecture
+
+```text
+                           ┌──────────────────────┐
+                           │      Internet        │
+                           └──────────┬───────────┘
+                                      │
+                                      ▼
+                         ┌────────────────────────┐
+                         │      Cloudflare        │
+                         │  DDoS / Edge Security  │
+                         │ SSL / Request Filter   │
+                         └──────────┬─────────────┘
+                                    │
+                                    ▼
+                    ┌────────────────────────────────┐
+                    │        Azure Virtual VM        │
+                    │         Ubuntu 24.04           │
+                    └──────────────┬─────────────────┘
+                                   │
+                    ┌──────────────▼──────────────┐
+                    │        UFW Firewall         │
+                    │       Azure NSG Rules       │
+                    └──────────────┬──────────────┘
+                                   │
+                                   ▼
+                    ┌─────────────────────────────┐
+                    │     Nginx Reverse Proxy     │
+                    │     + ModSecurity WAF       │
+                    │       + OWASP CRS           │
+                    └──────────────┬──────────────┘
+                                   │
+                 ┌─────────────────┴─────────────────┐
+                 │                                   │
+                 ▼                                   ▼
+     ┌─────────────────────┐          ┌─────────────────────┐
+     │ Laravel Application │          │ Monitoring Stack    │
+     │   Docker Container  │          │ Grafana / Loki      │
+     │                     │          │ Promtail            │
+     └──────────┬──────────┘          └──────────┬──────────┘
+                │                                │
+                ▼                                ▼
+      ┌────────────────────┐         ┌─────────────────────┐
+      │   MySQL Database   │         │ Security Monitoring │
+      │ Server-side        │         │ Falco / Fail2Ban    │
+      │ Encryption         │         │ Lynis / RKHunter    │
+      └────────────────────┘         └─────────────────────┘
+````
 
 ---
 
@@ -34,10 +86,6 @@ Implemented protections include:
 * Special character enforcement
 * Minimum password length validation
 
-Weak password checking is implemented using a local password blacklist system. 
-
-Pepper-based password protection is implemented before hashing. 
-
 ---
 
 # 📧 OTP Verification System
@@ -49,8 +97,6 @@ After registration:
 * OTP expires automatically
 * OTP attempts are tracked
 * Registration completes only after verification
-
-OTP expiration and tracking logic is implemented in the registration workflow. 
 
 ---
 
@@ -66,8 +112,6 @@ Features include:
 * Login challenge verification
 * Enable / Disable 2FA
 * Session-based 2FA validation
-
-2FA implementation includes Google Authenticator integration and OTP verification.  
 
 ---
 
@@ -85,6 +129,26 @@ Access control ensures users can only access their own notes.
 
 ---
 
+# 🔒 Server-Side Encryption
+
+VaultScribe uses server-side encryption for sensitive application data.
+
+Protected data includes:
+
+* Note titles
+* Note descriptions
+* Authentication-related sensitive values
+* 2FA secret storage
+
+Security implementation includes:
+
+* Laravel encryption mechanisms
+* Encrypted database storage
+* Secure handling of sensitive fields
+* Protected server-side data processing
+
+---
+
 # 🔒 Access Control & Authorization
 
 Security restrictions include:
@@ -95,7 +159,7 @@ Security restrictions include:
 * Session regeneration after login
 * Secure logout handling
 
-Session regeneration after successful authentication is implemented in the login flow. 
+A user can only view and manage their own notes.
 
 ---
 
@@ -231,7 +295,7 @@ Server SSH security includes:
 
 * Password login disabled
 * SSH key-based authentication only
-* Custom SSH port configuration
+* Custom SSH port configuration (2222)
 * Reduced brute-force attack surface
 
 SSH access does not allow password authentication.
@@ -361,8 +425,9 @@ Workflow:
 3. Push to GitHub
 4. CI/CD pipeline execution
 5. Docker build process
-6. Security scanning
-7. Deployment to Azure VM
+6. Trivy container scanning
+7. Security scanning
+8. Deployment to Azure VM
 
 ---
 
@@ -481,3 +546,6 @@ Licensed under the MIT License.
 
 **Deep Karmakar**
 Security-focused Laravel & DevSecOps Developer
+
+```
+```
