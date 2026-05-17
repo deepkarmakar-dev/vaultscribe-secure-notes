@@ -36,7 +36,7 @@ class RegisterController extends Controller
 
         // duplicate check
         if (User::where('email', $req->email)->exists()) {
-            return back()->withErrors(['email' => 'User already exists']);
+            return back()->withErrors(['email' => 'invalid credentials']);
         }
 
         // 2. PasswordController wala exact same Weak Password Check yahan bhi laga diya

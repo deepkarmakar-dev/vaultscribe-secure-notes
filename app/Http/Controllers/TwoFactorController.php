@@ -110,7 +110,7 @@ class TwoFactorController extends Controller
             return redirect()->route('login');
         }
 
-        $secret = Crypt::decrypt($user->google2fa_secret);
+        $secret = $user->google2fa_secret;
 
         // Verify OTP
         if (!Google2FA::verifyKey($secret, $request->one_time_password, 2)) {
@@ -135,21 +135,27 @@ class TwoFactorController extends Controller
     }
 
     //  Disable 2FA
-    public function disable()
-    {
-        $user = Auth::user();
+    public function disable(Request $request)
+{
+    // 1. Password validation check
+    $request->validate([
+        'password' => 'required|current_password', 
+    ]);
 
-        if (!$user) {
-            return redirect()->route('login');
-        }
+    $user = Auth::user();
 
-        $user->update([
-            'google2fa_enabled' => false,
-            'google2fa_secret' => null,
-        ]);
-
-        session()->forget('2fa_passed');
-
-        return redirect()->route('dashboard')->with('success', '2FA Disabled');
+    if (!$user) {
+        return redirect()->route('login');
     }
+
+    // 2. 2FA disable karna
+    $user->update([
+        'google2fa_enabled' => false,
+        'google2fa_secret' => null,
+    ]);
+
+    session()->forget('2fa_passed');
+
+    return redirect()->route('dashboard')->with('success', '2FA Disabled successfully');
+}
 }

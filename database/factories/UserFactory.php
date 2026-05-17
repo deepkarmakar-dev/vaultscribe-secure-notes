@@ -49,13 +49,16 @@ class UserFactory extends Factory
     /**
      * Indicate that the model has custom two-factor authentication configured.
      */
-    public function withTwoFactor(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            // Agar aap database mein secret ko encrypt karke store kar rahe ho, 
-            // toh yahan encrypt('secret_key') ka use kar sakte hain.
-            'google2fa_secret' => 'B3JXG5A8NYM4K5QZ', // Standard base32 mock secret
-            'google2fa_enabled' => true,
-        ]);
-    }
+/**
+ * Indicate that the model has custom two-factor authentication configured.
+ */
+public function withTwoFactor(): static
+{
+    return $this->state(fn (array $attributes) => [
+        // 1. User model automatic encrypt kar dega, isliye yahan plain text bhej rahe hain.
+        // 2. Har user ke liye ek naya aur unique valid Base32 secret generate hoga.
+        'google2fa_secret' => \PragmaRX\Google2FALaravel\Facade::generateSecretKey(),
+        'google2fa_enabled' => true,
+    ]);
+}
 }
